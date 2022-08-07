@@ -29,7 +29,7 @@ if (isset($_POST['sewapaket'])) {
 		<!-- Record username login -->
 		<input type="hidden" class="form-control" name="username" value="<?=$_SESSION['username'];?>" required>
 		<!-- Karena paket, yang biasa dikasih value 0 -->
-		<input type="hidden" class="form-control" name="id_gedung" value="0" required>
+		<!-- <input type="hidden" class="form-control" name="id_gedung" value="0" required> -->
 		<input type="hidden" class="form-control" name="id_fasilitas" value="0" required>
 		
             <div class="row mb-3">
@@ -141,6 +141,7 @@ if (isset($_POST['sewapaket'])) {
                 <tr>
                 <th>No</th>
                 <th>ID Sewa</th>
+                <th>Nama Gedung</th>
                 <th>Penyewa</th>
                 <th>Paket</th>
                 <th>Tanggal Pakai</th>
@@ -157,8 +158,10 @@ if (isset($_POST['sewapaket'])) {
             $no = 1;
             $totalbayar = 0;
 
-            $tampil = mysqli_query($koneksi, "SELECT * FROM sewa INNER JOIN paket on sewa.id_paket = paket.id_paket
-             WHERE username='$_SESSION[username]' ORDER BY id_sewa DESC");
+            $tampil = mysqli_query($koneksi, "SELECT * FROM sewa s 
+            INNER JOIN paket p on s.id_paket = p.id_paket
+            INNER JOIN gedung g on g.id_gedung = p.id_gedung
+            WHERE username='$_SESSION[username]' ORDER BY id_sewa DESC");
 
             while($hasil = $tampil->fetch_assoc()){
                 $diff = getDiffDay($hasil['tanggalpakai'], $hasil['tanggaltempo']);
@@ -168,6 +171,7 @@ if (isset($_POST['sewapaket'])) {
                 <tr>
                     <td><?= $no++; ?></td>
                     <td><?= $hasil['id_sewa']; ?></td>
+                    <td><?= $hasil['nama_gedung']; ?></td>
                     <td><?= $hasil['nama_penyewa']; ?></td>
                     <td><?= $hasil['id_paket']; ?></td>
                     <td><?= $hasil['tanggalpakai']; ?></td>

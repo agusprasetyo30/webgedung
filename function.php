@@ -265,28 +265,28 @@ function sewapaket($data){
     $alamat_penyewa = htmlspecialchars($data['alamat_penyewa']);
     $telp_penyewa = htmlspecialchars($data['telp_penyewa']);
     $id_paket = $data['id_paket'];
-    $id_gedung = $data['id_gedung'];
     $tanggalpakaiInput = htmlspecialchars($data['tanggalpakai']);
     $tanggalpakai = Date('Y-m-d', strtotime($tanggalpakaiInput));
     $tanggaltempoInput = htmlspecialchars($data['tanggaltempo']);
     $tanggaltempo = Date('Y-m-d', strtotime($tanggaltempoInput));
     $lamasewa = htmlspecialchars($data['lamasewa']);
-	$id_gedung = htmlspecialchars($data['id_gedung']);
 	$id_fasilitas = htmlspecialchars($data['id_fasilitas']);
     $sudahBayar ='0';
 
-    // $check = checkSewa($tanggalpakai, $lamasewa , null, $id_paket);
+    $sql = "SELECT id_gedung FROM paket WHERE id_paket = '$id_paket'";
+
+    $result =  mysqli_query($koneksi, $sql);
+    $id_gedung = mysqli_fetch_array($result)[0];
+
+    $check = checkSewa($tanggalpakai, $lamasewa , null, $id_paket);
     $check = checkSewaTest($tanggalpakai, $tanggaltempo, $lamasewa, $id_gedung);
     if ($check == 'true') {
         return false;
     }
-    $sql = "INSERT INTO `sewa` (`id_sewa`, `nama_penyewa`, `username`, `alamat_penyewa`, `telp_penyewa`, `id_paket`, `tanggalpakai`, `tanggaltempo`, `lamasewa`, `id_gedung`, `id_fasilitas`, `sudahbayar`) VALUES ('$id_sewa','$nama_penyewa','$username', '$alamat_penyewa','$telp_penyewa','$id_paket','$tanggalpakai','$tanggaltempo','$lamasewa', '$id_gedung' , '$null','$sudahBayar')";
+    $sql = "INSERT INTO `sewa` (`id_sewa`, `nama_penyewa`, `username`, `alamat_penyewa`, `telp_penyewa`, `id_paket`, `tanggalpakai`, `tanggaltempo`, `lamasewa`, `id_gedung`, `id_fasilitas`, `sudahbayar`) VALUES ('$id_sewa','$nama_penyewa','$username', '$alamat_penyewa','$telp_penyewa','$id_paket','$tanggalpakai','$tanggaltempo','$lamasewa', '$id_gedung' , '$id_fasilitas','$sudahBayar')";
     
     $query = mysqli_query($koneksi, $sql);
     return mysqli_affected_rows($koneksi);
-
-    
-
 }
 function reviewsend($data){
     global $koneksi;
