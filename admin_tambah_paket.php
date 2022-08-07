@@ -51,12 +51,38 @@ if (isset($_POST['simpan'])) {
                     <input type="text" class="form-control" name="paket" required>
                 </div>
             </div>
-            
+            <div class="row mb-3">
+                <label for="telp_penyewa" class="col-sm-2 col-form-label">Gedung</label>
+                <div class="col-sm-10">
+					<select name="id_gedung" class="form-control" required> 
+						<option value="0" selected disabled>Pilih gedung</option>
+						<?php
+						$sql="SELECT * FROM gedung";
+						$result = mysqli_query($koneksi,$sql);
+						while($row = mysqli_fetch_array($result)) 
+						{
+						?>
+							<option value="<?php echo($row['id_gedung'])?>" >
+							<?php echo($row['nama_gedung']);
+							?>
+							</option>
+						<?php 
+						} 
+						?>
+					</select>
+                </div>
+            </div>
             <div class="row mb-3">
                 <label for="harga" class="col-sm-2 col-form-label">Harga (Rp)</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name="harga" required>
                 </div>
+            </div>
+            <div class="row mb-3">
+                <label for="telp_penyewa" class="col-sm-2 col-form-label">Fasilitas</label>
+				<div class="col-sm-10">
+                    <input type="text" class="form-control" name="fasilitas" required>
+				</div>
             </div>
             <div class="row mb-3">
                 <label for="keterangan" class="col-sm-2 col-form-label">Keterangan</label>

@@ -56,7 +56,7 @@ if (isset($_POST['sewapaket'])) {
                 <label for="telp_penyewa" class="col-sm-2 col-form-label">Paket</label>
                 <div class="col-sm-10">
 					<select name="id_paket" class="form-control" required> 
-						<option value="0">Pilih salah satu</option>
+						<option value="0" selected disabled>Pilih paket</option>
 						<?php
 						$sql="SELECT * FROM paket";
 						$result = mysqli_query($koneksi,$sql);
@@ -73,6 +73,7 @@ if (isset($_POST['sewapaket'])) {
 					</select>
                 </div>
             </div>
+            
             <div class="row mb-3">
                 <label for="alamat_penyewa" class="col-sm-2 col-form-label">Alamat</label>
                 <div class="col-sm-10">
@@ -89,19 +90,26 @@ if (isset($_POST['sewapaket'])) {
             <div class="row mb-3">
                 <label for="id_paket" class="col-sm-2 col-form-label">Tanggal Pakai</label>
                 <div class="col-sm-10">
-                    <input type="date" class="form-control" name="tanggalpakai" placeholder="Masukkan Tanggal Pakai" required>
+                    <input type="date" class="form-control" name="tanggalpakai" id="tanggalpakai" placeholder="Masukkan Tanggal Pakai" required>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="id_paket" class="col-sm-2 col-form-label">Tanggal Tempo</label>
                 <div class="col-sm-10">
-                    <input type="date" class="form-control" name="tanggaltempo" placeholder="Masukkan Tanggal Pakai" required>
+                    <input type="date" class="form-control" name="tanggaltempo" id="tanggaltempo" placeholder="Masukkan Tanggal Pakai" required>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="id_paket" class="col-sm-2 col-form-label">Lama Sewa</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="lamasewa" placeholder="Lama sewa harian" required>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="lamasewa" id="lamasewa" placeholder="Lama sewa harian" required readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" name="hitung" id="hitung" type="button">Hitung</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="text-center">
@@ -192,3 +200,20 @@ if (isset($_POST['sewapaket'])) {
         </div>
 </div>
 <!-- /.container-fluid -->
+
+<script>
+    $(document).ready(function() {
+        $('#hitung').click(function(){
+            let tanggalPakai = new Date($('#tanggalpakai').val());
+            let tanggalTempo = new Date($('#tanggaltempo').val());
+
+            let jumlahHari = dayCounts(tanggalPakai, tanggalTempo);
+
+            $('#lamasewa').val(jumlahHari)
+        });
+
+        function dayCounts(dateFirst, dateLast, addingDays = 1) {
+            return ((dateLast.getTime() - dateFirst.getTime()) / (1000 * 3600 * 24)) + addingDays;
+        }
+    });
+</script>

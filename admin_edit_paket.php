@@ -38,6 +38,27 @@
             </div>
         </div>
         <div class="row mb-3">
+            <label for="telp_penyewa" class="col-sm-2 col-form-label">Gedung</label>
+            <div class="col-sm-10">
+                <select name="id_gedung" class="form-control" required> 
+                    <option value="0" selected disabled>Pilih gedung</option>
+                    <?php
+                    $sql="SELECT * FROM gedung";
+                    $result = mysqli_query($koneksi,$sql);
+                    while($row = mysqli_fetch_array($result)) 
+                    {
+                    ?>
+                        <option value="<?php echo($row['id_gedung'])?>" <?= $row['id_gedung'] == $hasil['id_gedung'] ? 'selected' : '' ?>>
+                        <?php echo($row['nama_gedung']);
+                        ?>
+                        </option>
+                    <?php 
+                    } 
+                    ?>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
             <label for="id_paket" class="col-sm-2 col-form-label">Fasilitas</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id ="fasilitas" name="fasilitas" value="<?php echo $hasil['fasilitas']?>" required>

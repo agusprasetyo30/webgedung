@@ -18,6 +18,7 @@
                 <th>No</th>
                 <th>ID Paket</th>
                 <th>Paket</th>
+                <th>Gedung</th>
                 <th>Fasilitas</th>
                 <th>Harga</th>
                 <th>Keterangan</th>
@@ -28,7 +29,8 @@
             <?php 
             $no = 1;
 
-            $tampil = mysqli_query($koneksi, "SELECT * FROM paket ORDER BY id_paket DESC");
+            $tampil = mysqli_query($koneksi, "SELECT * FROM paket p
+                INNER JOIN gedung g ON p.id_gedung = g.id_gedung ORDER BY id_paket DESC");
 
             while($hasil = mysqli_fetch_array($tampil)){
             ?>
@@ -37,6 +39,7 @@
                     <td><?= $no++; ?></td>
                     <td><?= $hasil['id_paket']; ?></td>
                     <td><?= $hasil['paket']; ?></td>
+                    <td><?= $hasil['nama_gedung']; ?></td>
                     <td><?= $hasil['fasilitas']; ?></td>
                     <td><?php echo rupiah($hasil['harga']); ?></td>
                     <td><?= $hasil['keterangan']; ?></td>
