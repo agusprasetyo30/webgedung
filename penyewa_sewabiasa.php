@@ -6,7 +6,7 @@
 //Jika fungsi tambah lebih dari 0/data tersimpan, maka munculkan alert dibawah
 if (isset($_POST['sewa'])) {
     if (sewa($_POST) > 0) {
-         echo "<script>
+        echo "<script>
                 alert('Silahkan Melakukan Pembayaran');
                 document.location.href ='?url=penyewa_sewabiasa.php';
             </script>";
@@ -108,19 +108,26 @@ if (isset($_POST['sewa'])) {
             <div class="row mb-3">
                 <label for="id_paket" class="col-sm-2 col-form-label">Tanggal Pakai</label>
                 <div class="col-sm-10">
-                    <input type="date" class="form-control" name="tanggalpakai" placeholder="Masukkan Tanggal Pakai" required>
+                    <input type="date" class="form-control" name="tanggalpakai" id="tanggalpakai" placeholder="Masukkan Tanggal Pakai" required>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="id_paket" class="col-sm-2 col-form-label">Tanggal Tempo</label>
                 <div class="col-sm-10">
-                    <input type="date" class="form-control" name="tanggaltempo" placeholder="Masukkan Tanggal Pakai" required>
+                    <input type="date" class="form-control" name="tanggaltempo" id="tanggaltempo" placeholder="Masukkan Tanggal Pakai" required>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="id_paket" class="col-sm-2 col-form-label">Lama Sewa</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="lamasewa" placeholder="Lama sewa harian" required>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="lamasewa" id="lamasewa" placeholder="Lama sewa harian" required readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary" name="hitung" id="hitung" type="button">Hitung</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="text-center">
@@ -153,7 +160,7 @@ if (isset($_POST['sewa'])) {
                 <th>No</th>
                 <th>ID Sewa</th>
                 <th>Penyewa</th>
-               
+                <th>Gedung</th>
                 <th>Tanggal Pakai</th>
                 <th>Tanggal Tempo</th>
                 <th>Lama Pakai</th>
@@ -183,6 +190,7 @@ if (isset($_POST['sewa'])) {
                     <td><?= $no++; ?></td>
                     <td><?= $hasil['id_sewa']; ?></td>
                     <td><?= $hasil['nama_penyewa']; ?></td>
+                    <td><?= $hasil['nama_gedung']; ?></td>
                     <td><?= $hasil['tanggalpakai']; ?></td>
                     <td><?= $hasil['tanggaltempo']; ?></td>
                     <td><?= $hasil['lamasewa']; ?></td>
@@ -213,3 +221,20 @@ if (isset($_POST['sewa'])) {
         </div>
 </div>
 <!-- /.container-fluid -->
+
+<script>
+    $(document).ready(function() {
+        $('#hitung').click(function(){
+            let tanggalPakai = new Date($('#tanggalpakai').val());
+            let tanggalTempo = new Date($('#tanggaltempo').val());
+
+            let jumlahHari = dayCounts(tanggalPakai, tanggalTempo);
+
+            $('#lamasewa').val(jumlahHari)
+        });
+
+        function dayCounts(dateFirst, dateLast, addingDays = 1) {
+            return ((dateLast.getTime() - dateFirst.getTime()) / (1000 * 3600 * 24)) + addingDays;
+        }
+    });
+</script>

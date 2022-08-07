@@ -1,6 +1,7 @@
 <?php
 // Koneksi Database
-$koneksi = mysqli_connect("localhost", "root", "", "dbsewagedung");
+$koneksi = mysqli_connect("localhost", "agusprasetyo30", "gokpras123", "dbsewagedung");
+// $koneksi = mysqli_connect("localhost", "root", "", "dbsewagedung");
 if(!$koneksi){
     die("koneksi dengan database gagal: ".mysqli_connect_error());
 }
@@ -168,6 +169,55 @@ function checkSewa($tanggalSewa, $lama, $id_gedung = null, $id_paket = null) {
     $sql = 'SELECT * FROM sewa WHERE ' . $whereLoc . ' and  '. $betweenDate;
     $result = mysqli_query($koneksi, $sql);
     return mysqli_fetch_row($result);
+
+    // return $sql;
+}
+
+function checkSewaTest($tanggalPakai, $tanggalTempo, $jumlahHari, $id_gedung = null, $id_paket = null)
+{
+    global $koneksi;
+    $checkResult = false;
+
+    if($id_gedung != null) {
+        $whereLoc = 'id_gedung = "'.$id_gedung . '"';
+    } else if($id_paket != null) {
+        $whereLoc = 'id_paket = "'.$id_paket .'"';
+    }
+
+    $tanggalPakaiInputMonth = date("m", strtotime($tanggalPakai));
+    $tanggalTempoInputMonthMinus = date("m", strtotime($tanggalTempo . '-1 month')); // digunakan untuk melakukan sortir bulan sebelum
+    $tanggalPakaiInputYear = date("Y", strtotime($tanggalPakai));
+
+    // cek apakah bulan pada tanggalpakai apakah sama dengan tanggaltempo
+    // if ($tanggalPakaiInputMonth == $tanggalTempoInputMonth) {
+        // $sql = "SELECT * FROM sewa WHERE " .$whereLoc. " 
+        //     AND MONTH(tanggalpakai) = '$tanggalPakaiInputMonth' 
+        //     AND MONTH(tanggaltempo) = '$tanggalTempoInputMonth' 
+        //     AND YEAR(tanggalpakai) = '$tanggalPakaiInputYear'";
+    // } else {
+    $sql = "SELECT * FROM sewa WHERE " .$whereLoc. " 
+        AND MONTH(tanggalpakai) BETWEEN '$tanggalTempoInputMonthMinus' and '$tanggalPakaiInputMonth'  
+        AND YEAR(tanggalpakai) = '$tanggalPakaiInputYear'";
+    // }
+
+    $result =  mysqli_query($koneksi, $sql);
+
+    while($data = mysqli_fetch_array($result)) 
+    {
+        for ($i=0; $i < $jumlahHari; $i++) {  // perulangan yang terdapat pada tanggal yg dipilih
+            $tanggalPakaiTemp = date("Y-m-d", strtotime($tanggalPakai . '+' .$i. ' day'));
+            
+            for ($j=0; $j < $data['lamasewa']; $j++) { // perulangan untuk data yang terdapat pada db
+                $tanggalpakaiDBTemp = date("Y-m-d", strtotime($data['tanggalpakai'] . '+' .$j. ' day'));
+                if ($tanggalPakaiTemp == $tanggalpakaiDBTemp) {
+                    $checkResult = true;
+                    break 3;
+                }
+            }
+        }
+    }
+
+    return $checkResult;
 }
 
 //Proses Sewa Biasa
@@ -181,31 +231,31 @@ function sewa($data){
         $chk .= $chk1.",";  
     }  
 	
-	$a = array($chk);
-	
     $id_sewa = htmlspecialchars($data['id_sewa']);
     $nama_penyewa = htmlspecialchars($data['nama_penyewa']);
 	$username = htmlspecialchars($data['username']);
     $alamat_penyewa = htmlspecialchars($data['alamat_penyewa']);
     $telp_penyewa = htmlspecialchars($data['telp_penyewa']);
-    $id_paket = $data['id_paket'] == 0 ? null : $data['id_paket'];
-    $tanggalpakai = htmlspecialchars($data['tanggalpakai']);
-    $tanggalpakai = Date('Y-m-d', strtotime($tanggalpakai));
-    $tanggaltempo = htmlspecialchars($data['tanggaltempo']);
-    $tanggaltempo = Date('Y-m-d', strtotime($tanggaltempo));
+    $tanggalPakaiInput = htmlspecialchars($data['tanggalpakai']);
+    $tanggalpakai = Date('Y-m-d', strtotime($tanggalPakaiInput));
+
+    $tanggalTempoInput = htmlspecialchars($data['tanggaltempo']);
+    $tanggaltempo = Date('Y-m-d', strtotime($tanggalTempoInput));
     $lamasewa = htmlspecialchars($data['lamasewa']);
 	$id_gedung = htmlspecialchars($data['id_gedung']) == "0" ? null : htmlspecialchars($data['id_gedung']) ;
-    $null ='0';
+    $sudahBayar ='0';
 
-    $check = checkSewa($tanggalpakai, $lamasewa , $id_gedung, null);
-    if ($check) {
+    // $check = checkSewa($tanggalpakai, $lamasewa , $id_gedung, null);
+    $check = checkSewaTest($tanggalpakai, $tanggaltempo, $lamasewa, $id_gedung);
+
+    if ($check == 'true') {
         return false;
-    }
-    $sql = "INSERT INTO `sewa` (`id_sewa`, `nama_penyewa`, `username`, `alamat_penyewa`, `telp_penyewa`, `id_paket`, `tanggalpakai`, `tanggaltempo`, `lamasewa`, `id_gedung`, `id_fasilitas`, `sudahbayar`) VALUES ('$id_sewa','$nama_penyewa','$username', '$alamat_penyewa','$telp_penyewa',NULL,'$tanggalpakai','$tanggaltempo','$lamasewa','$id_gedung','$chk','$null')";
-    mysqli_query($koneksi, $sql);
-    var_dump(mysqli_error($koneksi));
-    return mysqli_affected_rows($koneksi);
+    } 
 
+    $sql = "INSERT INTO `sewa` (`id_sewa`, `nama_penyewa`, `username`, `alamat_penyewa`, `telp_penyewa`, `id_paket`, `tanggalpakai`, `tanggaltempo`, `lamasewa`, `id_gedung`, `id_fasilitas`, `sudahbayar`) VALUES ('$id_sewa','$nama_penyewa','$username', '$alamat_penyewa','$telp_penyewa',NULL,'$tanggalpakai','$tanggaltempo','$lamasewa','$id_gedung','$chk','$sudahBayar')";
+    mysqli_query($koneksi, $sql);
+
+    return mysqli_affected_rows($koneksi);
 }
 
 //Proses Sewa Paket
