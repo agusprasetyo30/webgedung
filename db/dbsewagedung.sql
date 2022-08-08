@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Aug 04, 2022 at 02:22 PM
--- Server version: 5.7.33
--- PHP Version: 7.4.19
+-- Host: localhost
+-- Generation Time: Aug 08, 2022 at 01:09 AM
+-- Server version: 8.0.26
+-- PHP Version: 7.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,11 +30,11 @@ SET time_zone = "+00:00";
 CREATE TABLE `fasilitas` (
   `id_fasilitas` varchar(50) NOT NULL,
   `fasilitas` varchar(200) DEFAULT NULL,
-  `jumlah` int(200) DEFAULT NULL,
+  `jumlah` int DEFAULT NULL,
   `foto` mediumtext,
   `harga_fsl` varchar(200) DEFAULT NULL,
   `keterangan` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `fasilitas`
@@ -56,15 +56,15 @@ CREATE TABLE `gedung` (
   `foto` mediumtext,
   `harga_gdg` varchar(200) DEFAULT NULL,
   `keterangan` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `gedung`
 --
 
 INSERT INTO `gedung` (`id_gedung`, `nama_gedung`, `foto`, `harga_gdg`, `keterangan`) VALUES
-('G001', 'Gedung b', '62dd5e456fbc9.png', '60000', '-'),
-('G002', 'Gedung Utama nn', '62dd5e619e021.png', '600', '-');
+('G001', 'Gedung B', '62dd5e456fbc9.png', '60000', '-'),
+('G002', 'Gedung A', '62dd5e619e021.png', '600', '-');
 
 -- --------------------------------------------------------
 
@@ -77,7 +77,7 @@ CREATE TABLE `jadwal_sewa` (
   `tanggalpakai` date DEFAULT NULL,
   `tanggaltempo` date DEFAULT NULL,
   `id_gedung` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -87,18 +87,20 @@ CREATE TABLE `jadwal_sewa` (
 
 CREATE TABLE `paket` (
   `id_paket` varchar(50) NOT NULL,
+  `id_gedung` varchar(20) NOT NULL,
   `fasilitas` varchar(200) DEFAULT NULL,
   `paket` varchar(200) DEFAULT NULL,
   `harga` varchar(200) DEFAULT NULL,
   `keterangan` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `paket`
 --
 
-INSERT INTO `paket` (`id_paket`, `fasilitas`, `paket`, `harga`, `keterangan`) VALUES
-('P001', 'kkkk', 'Paket B', '2000', '-');
+INSERT INTO `paket` (`id_paket`, `id_gedung`, `fasilitas`, `paket`, `harga`, `keterangan`) VALUES
+('P001', 'G001', 'kkkk', 'TEST PAKET B', '2000', '-'),
+('P002', 'G002', 'TEST', 'TEST PAKET A', '80000', 'test');
 
 -- --------------------------------------------------------
 
@@ -107,15 +109,15 @@ INSERT INTO `paket` (`id_paket`, `fasilitas`, `paket`, `harga`, `keterangan`) VA
 --
 
 CREATE TABLE `review` (
-  `id_sewa` varchar(20) CHARACTER SET latin1 NOT NULL,
-  `reviewdata` text CHARACTER SET latin1,
-  `username` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `denda` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `status` varchar(10) CHARACTER SET latin1 NOT NULL,
+  `id_sewa` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `reviewdata` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `denda` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `status` varchar(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `foto` mediumtext NOT NULL,
-  `nama_penyewa` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `nama_penyewa` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `tgl` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -124,16 +126,16 @@ CREATE TABLE `review` (
 --
 
 CREATE TABLE `review_sesudah` (
-  `id_sewa` varchar(20) CHARACTER SET latin1 NOT NULL,
-  `reviewdata` text CHARACTER SET latin1,
-  `username` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `denda` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `status` varchar(10) CHARACTER SET latin1 NOT NULL,
+  `id_sewa` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `reviewdata` text CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+  `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `denda` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `status` varchar(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `foto` mediumtext NOT NULL,
-  `nama_penyewa` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `nama_penyewa` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `tgl` date DEFAULT NULL,
   `tgl_admin` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -144,17 +146,32 @@ CREATE TABLE `review_sesudah` (
 CREATE TABLE `sewa` (
   `id_sewa` varchar(200) NOT NULL,
   `nama_penyewa` varchar(200) DEFAULT NULL,
-  `username` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `alamat_penyewa` varchar(300) DEFAULT NULL,
   `telp_penyewa` varchar(20) DEFAULT NULL,
   `id_paket` varchar(50) DEFAULT NULL,
   `tanggalpakai` date DEFAULT NULL,
   `tanggaltempo` date DEFAULT NULL,
-  `lamasewa` int(30) DEFAULT NULL,
+  `lamasewa` int DEFAULT NULL,
   `id_gedung` varchar(20) DEFAULT NULL,
   `id_fasilitas` text NOT NULL,
   `sudahbayar` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `sewa`
+--
+
+INSERT INTO `sewa` (`id_sewa`, `nama_penyewa`, `username`, `alamat_penyewa`, `telp_penyewa`, `id_paket`, `tanggalpakai`, `tanggaltempo`, `lamasewa`, `id_gedung`, `id_fasilitas`, `sudahbayar`) VALUES
+('PKT222552', 'ASDAS paket', 'eldha', 'Test alamat2 paket', 'dsadas', 'P001', '2022-07-06', '2022-07-08', 3, 'G001', '0', '0'),
+('REG1982578', 'test', 'eldha', 'd', 'rgs', NULL, '2022-08-15', '2022-08-17', 3, 'G001', '0:Tanpa Fasilitas,', '0'),
+('REG2199562', 'SCA', 'eldha', 'AC', 'AF', NULL, '2022-09-07', '2022-09-17', 11, 'G001', '0:Tanpa Fasilitas,2000:Kursi,', '0'),
+('REG5463506', 'test januari', 'eldha', 'alamat januari', 'telepon januari', NULL, '2022-01-05', '2022-01-08', 4, 'G001', '0:Tanpa Fasilitas,2000:Kursi,99000:meja kkk,', '0'),
+('REG6413381', 'Test', 'eldha', 'test3', 'csaac', NULL, '2022-08-07', '2022-08-10', 4, 'G001', '0:Tanpa Fasilitas,2000:Kursi,99000:meja kkk,', '0'),
+('REG680846', 'halo tes', 'eldha', 'csaa', 'no test', NULL, '2022-08-21', '2022-08-27', 7, 'G002', '0:Tanpa Fasilitas,2000:Kursi,', '0'),
+('REG8316134', 'test pebruari', 'eldha', 'test pebruari', 'test pebruari', NULL, '2022-02-07', '2022-02-10', 4, 'G001', '0:Tanpa Fasilitas,2000:Kursi,', '0'),
+('REG8629321', 'VSDKMLK', 'eldha', 'SAC', 'GSGS', NULL, '2022-09-01', '2022-09-03', 3, 'G002', '0:Tanpa Fasilitas,', '0'),
+('REG9398469', 'fwef', 'eldha', 'dvsv', 'gwrgw', NULL, '2022-08-28', '2022-09-02', 6, 'G001', '', '0');
 
 -- --------------------------------------------------------
 
@@ -167,17 +184,17 @@ CREATE TABLE `transaksi_sewa` (
   `id_sewa` varchar(20) DEFAULT NULL,
   `norek` varchar(30) DEFAULT NULL,
   `foto` mediumtext NOT NULL,
-  `username` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `status` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `totalbayar` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `nama_penyewa` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `status` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `totalbayar` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `nama_penyewa` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `tanggalpakai` date DEFAULT NULL,
   `tanggaltempo` date DEFAULT NULL,
   `notifedAdmin` tinyint(1) DEFAULT '1',
   `notifedUser` tinyint(1) DEFAULT '1',
   `notifedReview` tinyint(1) DEFAULT '1',
   `updatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -186,11 +203,11 @@ CREATE TABLE `transaksi_sewa` (
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
@@ -210,11 +227,11 @@ INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
 --
 
 CREATE TABLE `users_admin` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users_admin`
@@ -230,11 +247,11 @@ INSERT INTO `users_admin` (`id`, `username`, `password`, `created_at`) VALUES
 --
 
 CREATE TABLE `users_review` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users_review`
@@ -270,7 +287,8 @@ ALTER TABLE `jadwal_sewa`
 -- Indexes for table `paket`
 --
 ALTER TABLE `paket`
-  ADD PRIMARY KEY (`id_paket`);
+  ADD PRIMARY KEY (`id_paket`),
+  ADD KEY `sewa_segung_paket_1` (`id_gedung`);
 
 --
 -- Indexes for table `review`
@@ -330,23 +348,29 @@ ALTER TABLE `users_review`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users_admin`
 --
 ALTER TABLE `users_admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users_review`
 --
 ALTER TABLE `users_review`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `paket`
+--
+ALTER TABLE `paket`
+  ADD CONSTRAINT `sewa_segung_paket_1` FOREIGN KEY (`id_gedung`) REFERENCES `gedung` (`id_gedung`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `sewa`
