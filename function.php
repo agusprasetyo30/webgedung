@@ -1,7 +1,6 @@
 <?php
 // Koneksi Database
-$koneksi = mysqli_connect("localhost", "agusprasetyo30", "gokpras123", "dbsewagedung");
-// $koneksi = mysqli_connect("localhost", "root", "", "dbsewagedung");
+$koneksi = mysqli_connect("localhost", "root", "", "dbsewagedung");
 if(!$koneksi){
     die("koneksi dengan database gagal: ".mysqli_connect_error());
 }
